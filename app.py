@@ -79,7 +79,7 @@ h1, h2, h3 {
 # ── HEADER ────────────────────────────────────────────────────────────────────
 st.markdown("# 🏢 Hamilton Zanze")
 st.markdown("### Monte Carlo Portfolio Risk Simulator")
-st.markdown("*Built by Joshua Khurin — Summer 2025 Internship*")
+st.markdown("*Built by Joshua Khurin — Summer 2026 Internship*")
 st.divider()
 
 # ── SIDEBAR — PROPERTY INPUTS ─────────────────────────────────────────────────
@@ -129,7 +129,7 @@ def load_macro_data(api_key):
 
 # Try loading FRED data — fall back to hardcoded if key missing
 try:
-    FRED_API_KEY = st.secrets.get("FRED_API_KEY", "b189465b27aff824c0a26416f3a69a9e")
+    FRED_API_KEY = st.secrets["FRED_API_KEY"]
     treasury_series, unemployment_series, cpi_series, gdp_series = load_macro_data(FRED_API_KEY)
     current_treasury     = treasury_series.iloc[-1]
     current_unemployment = unemployment_series.iloc[-1]
@@ -587,4 +587,4 @@ if run_button or True:  # auto-run on load with defaults
         plt.close()
 
     st.divider()
-    st.caption("Hamilton Zanze Monte Carlo Portfolio Risk Simulator · Built by Joshua Khurin · Summer 2025")
+    st.caption("Hamilton Zanze Monte Carlo Portfolio Risk Simulator · Built by Joshua Khurin · Summer 2026")
