@@ -122,10 +122,10 @@ def load_macro_data():
     import fredapi
     api_key = st.secrets["FRED_API_KEY"]
     fred = fredapi.Fred(api_key=api_key)
-    treasury_series     = fred.get_series('DGS10').resample('Y').mean().dropna()
-    unemployment_series = fred.get_series('UNRATE').resample('Y').mean().dropna()
-    cpi_series          = fred.get_series('CPIAUCSL').pct_change(12).resample('Y').mean().dropna() * 100
-    gdp_series          = fred.get_series('A191RL1Q225SBEA').resample('Y').mean().dropna()
+    treasury_series     = fred.get_series('DGS10').resample('YE').mean().dropna()
+    unemployment_series = fred.get_series('UNRATE').resample('YE').mean().dropna()
+    cpi_series          = fred.get_series('CPIAUCSL').pct_change(12).resample('YE').mean().dropna() * 100
+    gdp_series          = fred.get_series('A191RL1Q225SBEA').resample('YE').mean().dropna()
     return treasury_series, unemployment_series, cpi_series, gdp_series
 
 try:
