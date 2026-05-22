@@ -113,7 +113,10 @@ with st.sidebar:
         st.markdown(f'<div class="warning-box">⚠️ Going-in DSCR: {dscr_check:.2f}x — below lender minimum of 1.25x</div>', unsafe_allow_html=True)
     else:
         st.success(f"Going-in DSCR: {dscr_check:.2f}x ✓")
-
+    st.divider()
+    st.markdown("## Historical Property Data")
+    st.caption("CSV needs columns: year, rent_growth, vacancy_rate, expense_growth")
+    uploaded_file = st.file_uploader("Upload CSV", type="csv")
     run_button = st.button("▶ Run Simulation", type="primary", use_container_width=True)
 
 # ── LOAD MACRO DATA ───────────────────────────────────────────────────────────
@@ -171,14 +174,26 @@ if run_button or True:  # auto-run on load with defaults
 
     np.random.seed(42)
 
-    # Historical data — replace with real HZ data
-    n_years = 7
-    historical = pd.DataFrame({
-        "year":           range(2018, 2018 + n_years),
-        "rent_growth":    np.random.normal(2.8, 2.5, n_years),
-        "vacancy_rate":   np.random.normal(5.2, 1.8, n_years).clip(0, 30),
-        "expense_growth": np.random.normal(3.5, 1.5, n_years),
-    })
+    # Historical data
+    if uploaded_file is not None:
+        historical = pd.read_csv(uploaded_file)
+        st.sidebar.success(f"Loaded {len(historical)} years of real data")
+        
+        # Validate columns
+        required_cols = ["year", "rent_growth", "vacancy_rate", "expense_growth"]
+        missing = [c for c in required_cols if c not in historical.columns]
+        if missing:
+            st.error(f"CSV missing columns: {missing}. Need: year, rent_growth, vacancy_rate, expense_growth")
+            st.stop()
+    else:
+        st.sidebar.info("Using sample data — upload CSV for real results")
+        n_years = 7
+        historical = pd.DataFrame({
+            "year":           range(2018, 2018 + n_years),
+            "rent_growth":    np.random.normal(2.8, 2.5, n_years),
+            "vacancy_rate":   np.random.normal(5.2, 1.8, n_years).clip(0, 30),
+            "expense_growth": np.random.normal(3.5, 1.5, n_years),
+        })
 
     # MLE
     rent_mu,    rent_sig    = stats.norm.fit(historical["rent_growth"])
