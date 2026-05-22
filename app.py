@@ -118,8 +118,9 @@ with st.sidebar:
 
 # ── LOAD MACRO DATA ───────────────────────────────────────────────────────────
 @st.cache_data(ttl=3600)
-def load_macro_data(api_key):
+def load_macro_data():
     import fredapi
+    api_key = st.secrets["FRED_API_KEY"]
     fred = fredapi.Fred(api_key=api_key)
     treasury_series     = fred.get_series('DGS10').resample('Y').mean().dropna()
     unemployment_series = fred.get_series('UNRATE').resample('Y').mean().dropna()
@@ -127,10 +128,8 @@ def load_macro_data(api_key):
     gdp_series          = fred.get_series('A191RL1Q225SBEA').resample('Y').mean().dropna()
     return treasury_series, unemployment_series, cpi_series, gdp_series
 
-# Try loading FRED data — fall back to hardcoded if key missing
 try:
-    FRED_API_KEY = st.secrets["FRED_API_KEY"]
-    treasury_series, unemployment_series, cpi_series, gdp_series = load_macro_data(FRED_API_KEY)
+    treasury_series, unemployment_series, cpi_series, gdp_series = load_macro_data()
     current_treasury     = treasury_series.iloc[-1]
     current_unemployment = unemployment_series.iloc[-1]
     current_cpi          = cpi_series.iloc[-1]
@@ -143,13 +142,13 @@ try:
     })
     macro_df["year"] = macro_df.index.year
     fred_loaded = True
-except Exception:
+except Exception as e:
+    st.error(f"FRED error: {e}")
     current_treasury     = 4.30
     current_unemployment = 4.10
     current_cpi          = 3.20
     current_gdp          = 2.50
     fred_loaded = False
-    st.warning("FRED data unavailable — using hardcoded macro values")
 
 # ── MACRO CONDITIONS STRIP ────────────────────────────────────────────────────
 st.markdown('<div class="section-header">📊 Live Macro Conditions</div>', unsafe_allow_html=True)
