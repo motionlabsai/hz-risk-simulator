@@ -328,7 +328,7 @@ if run_button or True:  # auto-run on load with defaults
     st.markdown('<div class="section-header">Deal Risk Analysis</div>', unsafe_allow_html=True)
 
     # Key metrics row
-    c1, c2, c3, c4, c5, c6 = st.columns(6)
+    c1, c2, c3, c4, c5, c6 = st.columns([1.2, 1, 1, 1, 1, 1.4])
     with c1:
         st.metric("Expected Return", f"{expected:.2f}x", delta=f"±{std:.2f}x")
     with c2:
